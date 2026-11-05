@@ -1,0 +1,44 @@
+[LOG]
+; DEBUG,INFO,WARNING,ERROR,CRITICAL 預設 INFO
+; LOG_LEVEL=INFO
+
+[DATABASE]
+; 密碼請用環境變數 POSTGRES_PASSWORD
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+POSTGRES_DB=vectorapi
+; 或直接指定完整連線字串（優先）
+; DATABASE_URL=postgresql+asyncpg://user:pass@host:5432/db
+
+[EMBEDDING]
+; ollama（本地、離線）/ openai_compat（OpenAI 及相容 API）/ hash（僅測試用）
+EMBEDDING_PROVIDER=ollama
+; ollama：http://ollama:11434；OpenAI：https://api.openai.com/v1
+EMBEDDING_BASE_URL=http://ollama:11434
+; 金鑰請用環境變數 EMBEDDING_API_KEY
+EMBEDDING_MODEL=nomic-embed-text
+; 須與模型輸出維度一致；建立資料表時寫入 vector(n)，之後變更需 migration
+EMBEDDING_DIM=768
+EMBEDDING_BATCH_SIZE=32
+EMBEDDING_TIMEOUT=60
+
+[INGEST]
+; 切塊字數與相鄰塊重疊字數
+CHUNK_SIZE=800
+CHUNK_OVERLAP=100
+
+[SEARCH]
+; vector / fulltext / hybrid
+SEARCH_DEFAULT_MODE=hybrid
+; hybrid：向量與全文各取前 N 名再以 RRF 合併
+SEARCH_CANDIDATES=20
+SEARCH_RRF_K=60
+; HNSW 查詢候選數，越大越準越慢
+HNSW_EF_SEARCH=100
+; pgvector 0.8+：篩選後結果不足時繼續掃描（舊版自動略過）
+HNSW_ITERATIVE_SCAN=true
+
+[API]
+; 設定後所有 /api/v1（health 除外）需帶 X-API-Key header；建議用環境變數 API_KEY
+; 留空 = 不驗證，僅限本機 / 內網使用
